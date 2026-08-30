@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [20, 24]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run pack:check
+
+  action-smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./
+        with:
+          before: examples/before.snapshot.json
+          after: examples/after.snapshot.json
+          strict: false
+          format: html
+          out: schemablast-ci.html
+      - uses: actions/upload-artifact@v7
+        with:
+          name: schemablast-ci-report
+          path: schemablast-ci.html
+
+  validate-smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: node dist/cli.js validate examples/before.snapshot.json
+      - run: node dist/cli.js diff examples/before.snapshot.json examples/after.snapshot.json --format sarif --out schemablast.sarif

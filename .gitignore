@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+*.tgz
+schemablast-demo.html
+.edge-profile/
+.DS_Store
+Thumbs.db
+*.log

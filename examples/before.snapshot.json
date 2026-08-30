@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0",
+  "name": "main@baseline",
+  "nodes": [
+    {
+      "id": "warehouse.orders",
+      "kind": "dataset",
+      "owner": "checkout",
+      "primaryKey": ["id"],
+      "fields": {
+        "id": { "type": "string", "nullable": false },
+        "customer_id": { "type": "string", "nullable": false },
+        "amount": { "type": "number", "nullable": false },
+        "status": { "type": "string", "nullable": false, "enum": ["PENDING", "PAID", "REFUNDED"] },
+        "created_at": { "type": "timestamp", "nullable": false }
+      }
+    },
+    { "id": "model.daily_revenue", "kind": "model", "owner": "analytics" },
+    { "id": "dashboard.finance_overview", "kind": "dashboard", "owner": "finance" },
+    { "id": "feature.customer_risk", "kind": "feature", "owner": "risk" },
+    { "id": "api.risk_score", "kind": "api", "owner": "risk-platform" },
+    { "id": "job.order_archive", "kind": "job", "owner": "data-platform" }
+  ],
+  "edges": [
+    { "from": "warehouse.orders", "to": "model.daily_revenue", "fields": ["amount", "status", "created_at"] },
+    { "from": "model.daily_revenue", "to": "dashboard.finance_overview" },
+    { "from": "warehouse.orders", "to": "feature.customer_risk", "fields": ["customer_id", "status"] },
+    { "from": "feature.customer_risk", "to": "api.risk_score" },
+    { "from": "warehouse.orders", "to": "job.order_archive", "fields": ["created_at"] }
+  ]
+}

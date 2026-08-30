@@ -1,0 +1,29 @@
+{
+  "name": "schemablast",
+  "version": "0.1.0",
+  "description": "Data contract compatibility and lineage blast-radius checks for pull requests.",
+  "type": "module",
+  "bin": { "schemablast": "dist/cli.js" },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist", "README.md", "LICENSE", "THIRD_PARTY_NOTICES.md"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "demo": "node dist/cli.js demo --out schemablast-demo.html",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "prepare": "npm run build",
+    "test": "npm run build && node --test --test-reporter=spec test/diff.test.mjs test/cli.test.mjs",
+    "test:coverage": "npm run build && node --test --experimental-test-coverage --test-reporter=spec test/diff.test.mjs test/cli.test.mjs",
+    "pack:check": "npm pack --dry-run"
+  },
+  "engines": { "node": ">=20" },
+  "keywords": ["data-contracts", "data-lineage", "schema-evolution", "developer-tools", "data-engineering", "ci", "sarif"],
+  "author": "RRXXZZYY",
+  "license": "MIT",
+  "repository": { "type": "git", "url": "git+https://github.com/RRXXZZYY/schemablast.git" },
+  "bugs": { "url": "https://github.com/RRXXZZYY/schemablast/issues" },
+  "homepage": "https://github.com/RRXXZZYY/schemablast#readme",
+  "devDependencies": { "@types/node": "^24.3.0", "typescript": "^5.9.2" }
+}

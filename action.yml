@@ -1,0 +1,47 @@
+name: SchemaBlast contract check
+description: Check data contract compatibility and trace field-aware lineage blast radius.
+author: RRXXZZYY
+branding:
+  icon: share-2
+  color: blue
+inputs:
+  before:
+    description: Baseline snapshot path.
+    required: true
+  after:
+    description: Candidate snapshot path.
+    required: true
+  strict:
+    description: Fail on errors or warnings.
+    required: false
+    default: "true"
+  format:
+    description: pretty, json, html, or sarif.
+    required: false
+    default: pretty
+  out:
+    description: Optional report destination.
+    required: false
+    default: ""
+runs:
+  using: composite
+  steps:
+    - name: Build SchemaBlast
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: |
+        npm ci --ignore-scripts
+        npm run build
+    - name: Check contract blast radius
+      shell: bash
+      env:
+        INPUT_BEFORE: ${{ inputs.before }}
+        INPUT_AFTER: ${{ inputs.after }}
+        INPUT_STRICT: ${{ inputs.strict }}
+        INPUT_FORMAT: ${{ inputs.format }}
+        INPUT_OUT: ${{ inputs.out }}
+      run: |
+        args=(diff "$INPUT_BEFORE" "$INPUT_AFTER" --format "$INPUT_FORMAT")
+        if [[ "$INPUT_STRICT" == "true" ]]; then args+=(--strict); fi
+        if [[ -n "$INPUT_OUT" ]]; then args+=(--out "$INPUT_OUT"); fi
+        node "$GITHUB_ACTION_PATH/dist/cli.js" "${args[@]}"
