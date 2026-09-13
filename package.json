@@ -25,5 +25,5 @@
   "repository": { "type": "git", "url": "git+https://github.com/RRXXZZYY/schemablast.git" },
   "bugs": { "url": "https://github.com/RRXXZZYY/schemablast/issues" },
   "homepage": "https://github.com/RRXXZZYY/schemablast#readme",
-  "devDependencies": { "@types/node": "^24.3.0", "typescript": "^5.9.2" }
+  "devDependencies": { "@types/node": "^24.13.4", "typescript": "^5.9.2" }
 }
